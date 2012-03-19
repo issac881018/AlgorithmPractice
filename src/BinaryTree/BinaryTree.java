@@ -1,6 +1,7 @@
 package BinaryTree;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class BinaryTree {
 	private TreeNode root;
@@ -45,6 +46,7 @@ public class BinaryTree {
 //		System.out.println(nodeList.get(6).getLeftChild().getKey());
 	}
 	
+	
 	/**
 	 * 二叉树的遍历（递归算法）
 	 * @param TreeNode
@@ -78,10 +80,83 @@ public class BinaryTree {
 	 * 二叉树的遍历（非递归算法）
 	 * @param TreeNode
 	 */
-	public static void preOrderTraverse2(TreeNode root){
-		
+	public static void preOrderTraverse2(TreeNode root){//先序遍历
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = null;
+		if(root != null)
+			stack.push(root);
+		while(!stack.empty()){
+			p = stack.pop();
+			Visit(p);
+			if(p.getRightChild()!=null)
+				stack.push(p.getRightChild());
+			if(p.getLeftChild()!=null)
+				stack.push(p.getLeftChild());
+		}
 	}
 	
+	public static void inOrderTraverse2(TreeNode root) {// 中序遍历
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		while (p != null) {
+			while (p != null) {
+				if (p.getRightChild() != null) {
+					stack.push(p.getRightChild());
+//					stack.push(p);
+//					p = p.getLeftChild();
+				}
+				stack.push(p);
+				p = p.getLeftChild();
+			}
+			p = stack.pop();
+			 while(!stack.empty()&&p.getRightChild()==null){
+			 Visit(p);
+			 p = stack.pop();
+			 }
+			Visit(p);
+			if (!stack.empty())
+				p = stack.pop();
+			else
+				p = null;
+		}
+	}
+	
+	public static void inOrderTraverse3(TreeNode root){//中序遍历第二种非递归算法
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		while(p != null||!stack.empty()){
+			if(p!=null){
+				stack.push(p);
+				p = p.getLeftChild();
+			}
+			else{
+				p = stack.pop();
+				Visit(p);
+				p = p.getRightChild();
+			}
+		}
+	}
+	
+	public static void postOrderTraverse2(TreeNode root){//后序遍历非递归算法
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		TreeNode q = p;
+		while (p != null) {
+			for(;p!=null;p = p.getLeftChild()){
+				stack.push(p);
+			}
+			p = stack.pop();
+			while (p!=null && (p.getRightChild() == null||p.getRightChild() == q)) {
+				Visit(p);
+				q = p;
+				if(stack.empty())
+					return;
+				p = stack.pop();
+			}
+			stack.push(p);
+			p = p.getRightChild();
+		}
+	}
 	/**
 	 * 测试函数
 	 */
@@ -98,10 +173,22 @@ public class BinaryTree {
 		System.out.println(root.getRightChild().getKey());
 		
 		preOrderTraverse(root);
-		System.out.println("");
+		System.out.println("递归先序遍历");
 		inOrderTraverse(root);
-		System.out.println("");
+		System.out.println("递归中序遍历");
 		postOrderTraverse(root);
+		System.out.println("递归后续遍历");
+		
+		System.out.println("");
+		preOrderTraverse2(root);
+		System.out.println("非递归先序遍历");
+		inOrderTraverse3(root);
+		System.out.println("非递归中序遍历");
+		inOrderTraverse2(root);
+		System.out.println("非递归中序遍历");
+		postOrderTraverse2(root);
+		System.out.println("非递归后序遍历");
+		
 	}
 	
 }
